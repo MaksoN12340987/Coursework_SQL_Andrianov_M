@@ -44,7 +44,9 @@ class DBManager(Manager):
 
     def get_avg_salary(self):
         '''получает список всех вакансий, у которых зарплата выше средней по всем вакансиям'''
-        pass
+        salary_all = 0
+        for i, value in enumerate(self.__pull_vacanci):
+            salary_all += f"{i + 1}. {value["name"]} {value["salary"]["from"]}\n"
 
     def get_vacancies_with_higher_salary(self, search_word: str = ""):
         '''получает список всех вакансий, в названии которых содержатся переданные в метод слова'''
@@ -70,11 +72,16 @@ class DBManager(Manager):
             self.__vacancies.extend(vacancies)
             self.__params["page"] += 1
             
-            for i, value in enumerate(self.__pull_vacanci):
-                try:
-                    result += f"{i + 1}. {value["name"]} {value["salary"]["from"]}\n"
-                except TypeError:
-                    result += f"{i + 1}. {value["name"]} {value["salary"]}\n"
+            self.__drop_salary_null()
             
         return self.__vacancies
 
+    def __drop_salary_null(self):
+        for i, value in enumerate(self.__pull_vacanci):
+                try:
+                    if value["salary"]["from"]:
+                        value["salary"]["from"] = 0
+                except TypeError:
+                    if value["salary"]:
+                        value["salary"] = {"from" : 0}
+        return self.__pull_vacanci
