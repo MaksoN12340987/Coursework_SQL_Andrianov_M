@@ -21,7 +21,7 @@ class DBManager(Manager):
     def __init__(self, url):
         ''''''
         self.__url = url
-        self.__params = {"text": "", "page": 1, "per_page": 1}
+        self.__params = {"text": "", "page": 1, "per_page": 10}
         self.__headers = {"User-Agent": "HH-User-Agent"}
         self.__vacancies = []
 
@@ -33,7 +33,7 @@ class DBManager(Manager):
         ''''''
         pass
 
-    def get_companies_and_vacancies_count(self):
+    def get_companies_and_vacancies_count(self, vacancies: list = []):
         '''получает список всех вакансий с указанием названия компании, названия вакансии
         и зарплаты и ссылки на вакансию'''
         pass
@@ -45,7 +45,7 @@ class DBManager(Manager):
     def get_avg_salary(self):
         '''получает список всех вакансий, у которых зарплата выше средней по всем вакансиям'''
         salary_all = 0
-        for i, value in enumerate(self.__pull_vacanci):
+        for i, value in enumerate(self.__vacancies):
             salary_all += f"{i + 1}. {value["name"]} {value["salary"]["from"]}\n"
 
     def get_vacancies_with_higher_salary(self, search_word: str = ""):
@@ -77,11 +77,25 @@ class DBManager(Manager):
         return self.__vacancies
 
     def __drop_salary_null(self):
-        for i, value in enumerate(self.__pull_vacanci):
+        for i, value in enumerate(self.__vacancies):
                 try:
                     if value["salary"]["from"]:
                         value["salary"]["from"] = 0
                 except TypeError:
                     if value["salary"]:
                         value["salary"] = {"from" : 0}
-        return self.__pull_vacanci
+        return self.__vacancies
+
+    def __making_a_convenient_list(self):
+        result = []
+        for vacanci in self.__vacancies:
+            result.append(
+                {
+                "id" : vacanci["id"],
+                "name" : vacanci["id"],
+                "link" : vacanci["id"],
+                "hirer" : vacanci["id"],
+                "salary" : vacanci["id"],
+                "requirements" : vacanci["id"],
+                }
+            )
